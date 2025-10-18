@@ -2,7 +2,6 @@ package dictionary
 
 import (
 	"errors"
-	"math/rand"
 
 	"github.com/nospi/dictionary/internal/game"
 )

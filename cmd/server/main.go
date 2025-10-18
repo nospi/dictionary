@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/nospi/dictionary/internal/dictionary"
 	"github.com/nospi/dictionary/internal/room"
 	"github.com/nospi/dictionary/internal/ws"
 )
@@ -15,11 +16,14 @@ func main() {
 		port = "8080"
 	}
 
+	// Initialize dictionary service (mock for now)
+	dict := dictionary.NewMockDictionary()
+
 	// Initialize room manager
 	roomManager := room.NewManager()
 
-	// Initialize WebSocket hub
-	wsHub := ws.NewHub(roomManager)
+	// Initialize WebSocket hub with composition
+	wsHub := ws.NewHub(roomManager, dict)
 	go wsHub.Run()
 
 	// Setup HTTP routes
