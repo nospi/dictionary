@@ -1,0 +1,40 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{block "title" .}}Dictionary Game{{end}}</title>
+    <meta name="description" content="A multiplayer word game where players submit fake definitions">
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+    <!-- Custom JS -->
+    <script src="/static/js/game.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">📖 Dictionary Game</h1>
+            {{block "header-extra" .}}{{end}}
+        </header>
+
+        <main class="main">
+            {{block "content" .}}{{end}}
+        </main>
+
+        <footer class="footer">
+            <p>A party game for 3-10 players | <a href="https://github.com/nospi/dictionary" target="_blank">Source Code</a></p>
+        </footer>
+    </div>
+
+    <!-- Toast notification area -->
+    <div id="toast-container" class="toast-container"></div>
+</body>
+</html>
+{{end}}

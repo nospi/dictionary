@@ -1,0 +1,74 @@
+{{define "room.html"}}
+{{template "base" .}}
+{{end}}
+
+{{define "title"}}Room {{.Room.Code}} - Dictionary Game{{end}}
+
+{{define "header-extra"}}
+<div class="room-header">
+    <div class="room-code">
+        <span class="label">Room Code:</span>
+        <span class="code" id="room-code">{{.Room.Code}}</span>
+        <button class="btn btn-small" onclick="copyRoomCode()">Copy</button>
+    </div>
+</div>
+{{end}}
+
+{{define "content"}}
+{{if .PlayerID}}
+<div class="room" hx-ext="sse" sse-connect="/api/events?roomCode={{.Room.Code}}&playerId={{.PlayerID}}" sse-swap="room-state,game-state,voting-options,round-results,error">
+    <!-- Player List Sidebar -->
+    <aside class="sidebar" id="player-list" hx-swap-oob="true">
+        {{template "player-list" .Room}}
+    </aside>
+
+    <!-- Main Game Area -->
+    <section class="game-area" id="game-container">
+        {{if .Room.GameState}}
+            {{if eq .Room.GameState.Phase "LOBBY"}}
+                {{template "lobby" .Room}}
+            {{else if eq .Room.GameState.Phase "WRITING"}}
+                {{template "writing" .Room}}
+            {{else if eq .Room.GameState.Phase "VOTING"}}
+                {{template "voting" .Room}}
+            {{else if eq .Room.GameState.Phase "SCORING"}}
+                {{template "scoring" .Room}}
+            {{else if eq .Room.GameState.Phase "ENDED"}}
+                {{template "ended" .Room}}
+            {{end}}
+        {{else}}
+            {{template "lobby" .Room}}
+        {{end}}
+    </section>
+</div>
+{{else}}
+<div class="error-page">
+    <div class="error-icon">⚠️</div>
+    <h2>Not in Room</h2>
+    <p class="error-message">You need to join this room first.</p>
+    <a href="/" class="btn btn-primary">Back to Home</a>
+</div>
+{{end}}
+
+<script>
+    const roomCode = '{{.Room.Code}}';
+    const playerID = '{{.PlayerID}}';
+
+    function copyRoomCode() {
+        navigator.clipboard.writeText(roomCode).then(() => {
+            showToast('Room code copied to clipboard!', 'success');
+        });
+    }
+
+    // Handle SSE connection status
+    document.addEventListener('htmx:sseError', (event) => {
+        console.error('SSE connection error:', event.detail);
+        showToast('Connection lost. Reconnecting...', 'error');
+    });
+
+    document.addEventListener('htmx:sseOpen', (event) => {
+        console.log('SSE connection established');
+        showToast('Connected to game', 'success');
+    });
+</script>
+{{end}}

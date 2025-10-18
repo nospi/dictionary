@@ -1,0 +1,65 @@
+{{define "scoring"}}
+<div class="phase-scoring">
+    <div class="phase-header">
+        <h2>Round Results</h2>
+        <div class="phase-info">
+            <span class="round-number">Round {{.GameState.CurrentRound}}</span>
+        </div>
+    </div>
+
+    <div class="word-reveal">
+        <h3>The Word Was:</h3>
+        <div class="word">{{.GameState.CurrentWord.Text}}</div>
+    </div>
+
+    <div class="results-section">
+        <h4>Definitions & Votes:</h4>
+
+        {{$realDefID := .Results.realDefinitionId}}
+        {{$scores := .Results.scores}}
+
+        <div class="definitions-results">
+            {{range .Results.definitions}}
+            <div class="definition-result {{if .isReal}}real-definition{{end}}">
+                <div class="def-header">
+                    {{if .isReal}}
+                    <span class="badge real">✓ Real Definition</span>
+                    {{else}}
+                    <span class="author">By: {{.authorId}}</span>
+                    {{end}}
+                </div>
+
+                <div class="def-text">{{.text}}</div>
+
+                <div class="def-votes">
+                    {{if .votes}}
+                    <span class="vote-count">{{len .votes}} vote{{if gt (len .votes) 1}}s{{end}}</span>
+                    {{if .pointsEarned}}
+                    <span class="points-earned">+{{.pointsEarned}} pts</span>
+                    {{end}}
+                    {{else}}
+                    <span class="vote-count no-votes">No votes</span>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="current-scores">
+        <h4>Current Scores:</h4>
+        <div class="scoreboard">
+            {{range .Players}}
+            {{if .IsActive}}
+            <div class="score-entry">
+                <span class="player-name">{{.Nickname}}</span>
+                <span class="player-score">{{index $.GameState.Scores .ID}} pts</span>
+            </div>
+            {{end}}
+            {{end}}
+        </div>
+    </div>
+
+    <p class="next-round-notice">Next round starting soon...</p>
+</div>
+{{end}}

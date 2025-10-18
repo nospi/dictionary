@@ -1,0 +1,40 @@
+{{define "lobby"}}
+<div class="lobby">
+    <h2>Waiting to Start...</h2>
+
+    <p class="instructions">
+        Waiting for the host to start the game. You need at least 3 players to begin.
+    </p>
+
+    <div class="lobby-status">
+        <div class="status-item">
+            <span class="label">Players:</span>
+            <span class="value">{{len .Players}}/{{.MaxPlayers}}</span>
+        </div>
+        <div class="status-item">
+            <span class="label">Ready:</span>
+            <span class="value">{{if ge (len .Players) 3}}✅ Yes{{else}}❌ Need {{sub 3 (len .Players)}} more{{end}}</span>
+        </div>
+    </div>
+
+    {{if .GameState}}
+    <form hx-post="/api/game/start" hx-swap="none" class="lobby-actions">
+        <input type="hidden" name="roomCode" value="{{.Code}}">
+        {{if ge (len .Players) 3}}
+        <button type="submit" class="btn btn-primary btn-large">
+            🎮 Start Game
+        </button>
+        {{else}}
+        <button type="button" class="btn btn-large" disabled>
+            Waiting for More Players...
+        </button>
+        {{end}}
+    </form>
+    {{end}}
+
+    <div class="lobby-help">
+        <h4>Share this room code with your friends:</h4>
+        <div class="room-code-display">{{.Code}}</div>
+    </div>
+</div>
+{{end}}

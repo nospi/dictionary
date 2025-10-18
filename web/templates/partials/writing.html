@@ -1,0 +1,67 @@
+{{define "writing"}}
+<div class="phase-writing">
+    <div class="phase-header">
+        <h2>Writing Phase</h2>
+        <div class="phase-info">
+            <span class="round-number">Round {{.GameState.CurrentRound}}</span>
+            <span class="timer" data-phase-start="{{.GameState.PhaseStartedAt}}" data-duration="90">1:30</span>
+        </div>
+    </div>
+
+    <div class="word-display">
+        <h3>Your Word</h3>
+        <div class="word">{{.GameState.CurrentWord.Text}}</div>
+        <p class="hint">Write a fake definition that sounds believable!</p>
+    </div>
+
+    <form hx-post="/api/game/definition" hx-swap="innerHTML" hx-target="#definition-status" class="definition-form">
+        <input type="hidden" name="roomCode" value="{{.Code}}">
+
+        <div class="form-group">
+            <label for="definition">Your Definition</label>
+            <textarea
+                id="definition"
+                name="definition"
+                rows="4"
+                maxlength="200"
+                placeholder="A small purple fruit native to..."
+                required
+            ></textarea>
+            <small class="char-counter"><span id="char-count">0</span>/200 characters</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-large">
+            Submit Definition
+        </button>
+
+        <div id="definition-status"></div>
+    </form>
+
+    <div class="submission-status">
+        <h4>Submissions:</h4>
+        <div class="progress-bar">
+            <div class="progress" style="width: {{divf (len .GameState.Definitions) (len .Players) | mulf 100}}%"></div>
+        </div>
+        <p>{{len .GameState.Definitions}}/{{len .Players}} players submitted</p>
+    </div>
+</div>
+
+<script>
+    // Character counter
+    const textarea = document.getElementById('definition');
+    const charCount = document.getElementById('char-count');
+    if (textarea && charCount) {
+        textarea.addEventListener('input', () => {
+            charCount.textContent = textarea.value.length;
+        });
+    }
+
+    // Disable form after submission
+    document.querySelector('.definition-form').addEventListener('htmx:afterRequest', (e) => {
+        if (e.detail.successful) {
+            textarea.disabled = true;
+            e.target.querySelector('button').disabled = true;
+        }
+    });
+</script>
+{{end}}

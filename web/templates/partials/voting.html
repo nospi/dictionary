@@ -1,0 +1,67 @@
+{{define "voting"}}
+<div class="phase-voting">
+    <div class="phase-header">
+        <h2>Voting Phase</h2>
+        <div class="phase-info">
+            <span class="round-number">Round {{.GameState.CurrentRound}}</span>
+            <span class="timer" data-phase-start="{{.GameState.PhaseStartedAt}}" data-duration="60">1:00</span>
+        </div>
+    </div>
+
+    <div class="word-reminder">
+        <strong>Word:</strong> {{.GameState.CurrentWord.Text}}
+    </div>
+
+    <p class="instructions">
+        Which definition is the real one? Vote for the one you think is correct!
+    </p>
+
+    <form hx-post="/api/game/vote" hx-swap="innerHTML" hx-target="#vote-status" class="voting-form">
+        <input type="hidden" name="roomCode" value="{{.Code}}">
+
+        <div class="definitions-list">
+            {{range $index, $def := .GameState.Definitions}}
+            <div class="definition-option">
+                <input
+                    type="radio"
+                    id="def-{{$def.ID}}"
+                    name="definitionId"
+                    value="{{$def.ID}}"
+                    required
+                >
+                <label for="def-{{$def.ID}}">
+                    <span class="def-number">{{add $index 1}}.</span>
+                    <span class="def-text">{{$def.Text}}</span>
+                </label>
+            </div>
+            {{end}}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-large">
+            Submit Vote
+        </button>
+
+        <div id="vote-status"></div>
+    </form>
+
+    <div class="voting-status">
+        <h4>Votes:</h4>
+        <div class="progress-bar">
+            <div class="progress" style="width: {{divf (len .GameState.Votes) (len .Players) | mulf 100}}%"></div>
+        </div>
+        <p>{{len .GameState.Votes}}/{{len .Players}} players voted</p>
+    </div>
+</div>
+
+<script>
+    // Disable form after submission
+    document.querySelector('.voting-form').addEventListener('htmx:afterRequest', (e) => {
+        if (e.detail.successful) {
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.disabled = true;
+            });
+            e.target.querySelector('button').disabled = true;
+        }
+    });
+</script>
+{{end}}

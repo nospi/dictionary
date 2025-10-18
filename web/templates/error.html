@@ -1,0 +1,14 @@
+{{define "error.html"}}
+{{template "base" .}}
+{{end}}
+
+{{define "title"}}{{.Title}} - Dictionary Game{{end}}
+
+{{define "content"}}
+<div class="error-page">
+    <div class="error-icon">❌</div>
+    <h2>{{.Title}}</h2>
+    <p class="error-message">{{.Message}}</p>
+    <a href="/" class="btn btn-primary">Back to Home</a>
+</div>
+{{end}}

@@ -1,0 +1,142 @@
+{{define "home.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary Game - Home</title>
+    <meta name="description" content="A multiplayer word game where players submit fake definitions">
+
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js"></script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="/static/js/game.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">📖 Dictionary Game</h1>
+        </header>
+
+        <main class="main">
+            <div class="home">
+                <div class="hero">
+                    <h2>Welcome to Dictionary Game!</h2>
+                    <p class="subtitle">A multiplayer word game where creativity meets deception</p>
+                </div>
+
+                <div class="home-actions">
+                    <!-- Create Room Card -->
+                    <div class="card">
+                        <h3>Create a Room</h3>
+                        <p>Start a new game and invite your friends</p>
+
+                        <form hx-post="/api/room/create" hx-swap="none" class="form">
+                            <div class="form-group">
+                                <label for="create-nickname">Your Nickname</label>
+                                <input
+                                    type="text"
+                                    id="create-nickname"
+                                    name="nickname"
+                                    placeholder="Enter your nickname"
+                                    minlength="2"
+                                    maxlength="20"
+                                    required
+                                    autocomplete="off"
+                                >
+                                <small class="hint">2-20 characters</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-large">
+                                Create Room
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Join Room Card -->
+                    <div class="card">
+                        <h3>Join a Room</h3>
+                        <p>Enter a room code to join an existing game</p>
+
+                        <form hx-post="/api/room/join" hx-swap="none" class="form">
+                            <div class="form-group">
+                                <label for="join-roomcode">Room Code</label>
+                                <input
+                                    type="text"
+                                    id="join-roomcode"
+                                    name="roomCode"
+                                    placeholder="ABC123"
+                                    maxlength="6"
+                                    required
+                                    autocomplete="off"
+                                    style="text-transform: uppercase"
+                                >
+                                <small class="hint">6-character code</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="join-nickname">Your Nickname</label>
+                                <input
+                                    type="text"
+                                    id="join-nickname"
+                                    name="nickname"
+                                    placeholder="Enter your nickname"
+                                    minlength="2"
+                                    maxlength="20"
+                                    required
+                                    autocomplete="off"
+                                >
+                                <small class="hint">2-20 characters</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-large">
+                                Join Room
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- How to Play Section -->
+                <div class="card how-to-play">
+                    <h3>How to Play</h3>
+                    <ol class="instructions">
+                        <li><strong>Create or join a room</strong> - Get your friends together (3-10 players)</li>
+                        <li><strong>Get an obscure word</strong> - The game shows everyone a weird word</li>
+                        <li><strong>Write a fake definition</strong> - Try to make it sound believable!</li>
+                        <li><strong>Vote for the real definition</strong> - Guess which one is correct</li>
+                        <li><strong>Score points</strong> - Earn points for guessing right or fooling others</li>
+                    </ol>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>A party game for 3-10 players | <a href="https://github.com/nospi/dictionary" target="_blank">Source Code</a></p>
+        </footer>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedNickname = localStorage.getItem('nickname');
+            if (savedNickname) {
+                document.getElementById('create-nickname').value = savedNickname;
+                document.getElementById('join-nickname').value = savedNickname;
+            }
+
+            document.querySelectorAll('input[name="nickname"]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    localStorage.setItem('nickname', e.target.value);
+                });
+            });
+
+            const roomCodeInput = document.getElementById('join-roomcode');
+            roomCodeInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.toUpperCase();
+            });
+        });
+    </script>
+</body>
+</html>
+{{end}}

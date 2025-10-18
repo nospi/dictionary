@@ -1,0 +1,51 @@
+{{define "ended"}}
+<div class="phase-ended">
+    <div class="game-over-banner">
+        <h2>🎉 Game Over! 🎉</h2>
+    </div>
+
+    <div class="final-scores">
+        <h3>Final Scores</h3>
+
+        {{$scores := .GameState.Scores}}
+        {{$players := .Players}}
+
+        <!-- Sort players by score (done in template) -->
+        <div class="scoreboard final">
+            {{range .Players}}
+            {{if .IsActive}}
+            <div class="score-entry {{if eq (index $scores .ID) (maxScore $scores)}}winner{{end}}">
+                <span class="rank">
+                    {{if eq (index $scores .ID) (maxScore $scores)}}👑{{end}}
+                </span>
+                <span class="player-name">{{.Nickname}}</span>
+                <span class="player-score">{{index $scores .ID}} points</span>
+            </div>
+            {{end}}
+            {{end}}
+        </div>
+    </div>
+
+    <div class="game-stats">
+        <h4>Game Stats</h4>
+        <div class="stats-grid">
+            <div class="stat">
+                <span class="stat-label">Rounds Played:</span>
+                <span class="stat-value">{{.GameState.CurrentRound}}</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Players:</span>
+                <span class="stat-value">{{len .Players}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="end-game-actions">
+        <a href="/" class="btn btn-primary btn-large">
+            Back to Home
+        </a>
+
+        <p class="hint">Want to play again? Create a new room!</p>
+    </div>
+</div>
+{{end}}

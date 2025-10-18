@@ -1,0 +1,24 @@
+{{define "player-list"}}
+<div class="player-list">
+    <h3>Players ({{len .Players}}/{{.MaxPlayers}})</h3>
+    <ul class="players">
+        {{range .Players}}
+        {{if .IsActive}}
+        <li class="player {{if .IsHost}}host{{end}}">
+            <span class="player-name">{{.Nickname}}</span>
+            {{if .IsHost}}<span class="badge">Host</span>{{end}}
+            {{if $.GameState}}
+            <span class="player-score">{{index $.GameState.Scores .ID}} pts</span>
+            {{end}}
+        </li>
+        {{end}}
+        {{end}}
+    </ul>
+
+    {{if .IsLocked}}
+    <p class="room-status locked">🔒 Room Locked</p>
+    {{else}}
+    <p class="room-status open">🔓 Room Open</p>
+    {{end}}
+</div>
+{{end}}
