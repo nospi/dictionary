@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DICT_API_URL=https://api.dictionaryapi.dev/api/v2/entries/en/
+      - USE_MOCK_DICTIONARY=true
+    volumes:
+      - ./data:/root/data
+    restart: unless-stopped
